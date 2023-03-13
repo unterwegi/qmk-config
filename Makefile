@@ -1,39 +1,35 @@
 USER = unterwegi
-KEYBOARDS = gmmk2_p65_iso
+KEYBOARD = gmmk2_p65_iso
+KEYBOARD_PATH = gmmk/gmmk2/p65/iso
 
-# keymap path
-PATH_gmmk2_p65_iso = gmmk/gmmk2/p65/iso
+all: build flash
 
-# keyboard name
-NAME_gmmk2_p65_iso = gmmk/gmmk2/p65/iso
-
-all: $(KEYBOARDS)
-
-.PHONY: $(KEYBOARDS)
-$(KEYBOARDS):
+.PHONY: build
+build:
 	# init submodule
 	git submodule update --init --recursive
 	git submodule foreach git pull origin master
 	git submodule foreach make git-submodule 
 
 	# cleanup old symlinks
-	rm -rf qmk_firmware/keyboards/$(PATH_$@)/keymaps/$(USER)
+	rm -rf qmk_firmware/keyboards/$(KEYBOARD_PATH)/keymaps/$(USER)
 
 	# add new symlinks
-	ln -s $(shell pwd)/$@ qmk_firmware/keyboards/$(PATH_$@)/keymaps/$(USER)
+	ln -s $(shell pwd)/$(KEYBOARD) qmk_firmware/keyboards/$(KEYBOARD_PATH)/keymaps/$(USER)
 
 	# run lint check
-	cd qmk_firmware; qmk lint -km $(USER) -kb $(NAME_$@) --strict
+	cd qmk_firmware; qmk lint -km $(USER) -kb $(KEYBOARD_PATH) --strict
 
 	# run build
-	make BUILD_DIR=$(shell pwd)/build -j1 -C qmk_firmware $(NAME_$@):$(USER)
+	make -j1 -C qmk_firmware $(KEYBOARD_PATH):$(USER)
 
-	# cleanup symlinks
-	rm -rf qmk_firmware/keyboards/$(PATH_$@)/keymaps/$(USER)
+flash:
+	# run flash
+	cd qmk_firmware; qmk flash -km $(USER) -kb $(KEYBOARD_PATH)
 
 clean:
 	rm -rf ./qmk_firmware/
 	rm -rf ./build/
-	rm -rf qmk_firmware/keyboards/$(PATH_gmmk2_p65_iso)/keymaps/$(USER)
+	rm -rf qmk_firmware/keyboards/$(KEYBOARD_PATH)/keymaps/$(USER)
 
 
