@@ -1,4 +1,4 @@
-/* Copyright 2021 Glorious, LLC <salman@pcgamingrace.com>
+/* Copyright 2023 Ingo Unterweger (https://github.com/unterwegi)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,3 +42,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,  _______,  RGB_HUI,  RGB_HUD,  RGB_SPD,  RGB_SPI,  _______,  _______,  _______,  _______,  KC_MUTE,  KC_MPLY,  _______,   RGB_VAI,  KC_HOME,
   _______,  _______,  _______,                                QK_BOOT,                                _______,  _______,  RGB_RMOD,  RGB_VAD,  RGB_MOD) 
 };
+
+// Set my default RGB colors on startup
+void keyboard_post_init_user(void) {
+    rgb_matrix_enable_noeeprom();
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+    rgb_matrix_sethsv_noeeprom(140,140,255); // somewhere between azure and cyan hue with 55% saturation and full brightness
+}
